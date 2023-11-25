@@ -43,4 +43,38 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { signup };
+const signin = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Email and Password is reqiured",
+    });
+  }
+  try {
+    const user = await userModel.findOne({ email }).select("+password");
+    if (!user || user.password !== password) {
+      res.status(200).json({
+        success: false,
+        message: "Invalide Credentials",
+      });
+    }
+    const token = user.jwtToken();
+    user.password = undefined;
+    const cookieOption = {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    };
+    res.cookie("token", token, cookieOption);
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+module.exports = { signup, signin };
