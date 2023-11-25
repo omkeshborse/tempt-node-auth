@@ -77,4 +77,23 @@ const signin = async (req, res) => {
     });
   }
 };
-module.exports = { signup, signin };
+const getuser = async (req, res, next) => {
+  const userId = req.user.id;
+  try {
+    const user = await userModel.findById(userId);
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const logout = () =>{
+
+}
+module.exports = { signup, signin, getuser ,logout };
