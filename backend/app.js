@@ -13,6 +13,7 @@ const corsOption = {
   credentials: true,
   optionSuccessStatus: 200,
 };
+app.use(cors(corsOption))
 app.use("/api/auth", authRouter);
 app.use("/", (req, res) => {
   res.status(200).json({
